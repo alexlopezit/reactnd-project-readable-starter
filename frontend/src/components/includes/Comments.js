@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+import * as moment from 'moment-timezone'
 
-import { fetchComments } from '../../actions'
+import { fetchComments, postComment } from '../../actions'
 
 import Loading from './Loading'
 
@@ -10,11 +11,29 @@ class Comments extends React.Component {
 
   static propTypes = {
     postId: PropTypes.string.isRequired,
-    comments: PropTypes.array.isRequired
+    comments: PropTypes.array.isRequired,
+    fetchComments: PropTypes.func.isRequired,
+    postComment: PropTypes.func.isRequired
   }
 
   componentWillMount() {
     this.props.fetchComments( this.props.postId )
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+        
+    const formData = {}
+    for (const field in this.refs) {
+      formData[field] = this.refs[field].value
+    }
+
+    // save
+    this.props.postComment(formData, this.props.postId, this.onPostSuccess)
+  }
+
+  onPostSuccess = (response) => {
+    console.log('onPostSuccess')
   }
 
   render() {
@@ -28,18 +47,32 @@ class Comments extends React.Component {
       <React.Fragment>
         <ul className="nav nav-tabs">
           <li className="active"><a>Comments</a></li>
-          <li><a>Add Comment</a></li>
         </ul>
 
         <div className="tab-content">
           <div className="tab-pane active">
-            { comments.map(item =>
-              <div className="well well-lg" key={item.id}>
+            { comments && comments.map(item =>
+              <div className="well well-lg" key={ `comment-${item.id}` }>
                 <h4 className="media-heading text-uppercase reviews">{item.author}</h4>
                 <p>{item.body}</p>
+                <div className="text-muted">Commented on {moment(item.timestamp).format("MM/DD/YYYY")}</div>
               </div>
             )}
           </div>
+        </div>
+        <div className="well well-lg">
+          <h3>New Comment</h3>
+          <form onSubmit={ this.handleSubmit }>
+            <div className="form-group">
+              <label>Author</label>
+              <input name="author" ref="author" type="text" className="form-control"/>
+            </div>
+            <div className="form-group">
+              <label>Body</label>
+              <textarea name="body" ref="body" className="form-control"/>
+            </div>
+            <button type="submit" className="btn btn-default">Comment</button>
+          </form>
         </div>
       </React.Fragment>
     )
@@ -58,7 +91,7 @@ function mapStateToProps ({ commentsReducer }) {
 function mapDispatchToProps (dispatch) {
   return {
     fetchComments: (postId) => dispatch(fetchComments(postId)),
-    // addComment: (data) => dispatch(addComment(data))
+    postComment: (data, postId, callback) => dispatch(postComment(data, postId, callback))
   }
 }
 

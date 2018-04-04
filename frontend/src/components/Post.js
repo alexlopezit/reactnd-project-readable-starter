@@ -1,5 +1,5 @@
 import React from 'react'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import * as moment from 'moment-timezone'
 import PropTypes from 'prop-types'
@@ -41,7 +41,7 @@ class Post extends React.Component {
               {post &&
                 <React.Fragment>
                   <h2 className="blog-post-title">{post.title}</h2>
-                  <p className="blog-post-meta">Posted on {moment(post.timestamp).format("MM/DD/YYYY")} by {post.author}</p>
+                  <p className="blog-post-meta">Posted on {moment(post.timestamp).format("MM/DD/YYYY")} by {post.author} | <Link to={ `/category/${post.category}`}>{post.category}</Link></p>
                   <p>{post.body}</p>
                   { post.id && <Comments postId={ post.id } /> }
                 </React.Fragment>                

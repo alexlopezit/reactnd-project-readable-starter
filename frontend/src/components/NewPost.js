@@ -18,12 +18,7 @@ class NewPost extends React.Component {
     newPost: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props)
-    this.handleSubmit = this.handleSubmit.bind(this)
-  }
-
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault()
 
     // TODO: validate form inputs
@@ -79,7 +74,7 @@ class NewPost extends React.Component {
                   )}
                   </select>
                 </div>
-                <button type="submit" className="btn btn-default">Submit</button>
+                <button type="submit" className="btn btn-default">Post</button>
               </form>
             </div>
             <div className="col-sm-3 col-sm-offset-1 blog-sidebar">

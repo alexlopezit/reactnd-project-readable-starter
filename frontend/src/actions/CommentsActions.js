@@ -47,9 +47,9 @@ export const postCommentBegin = () => ({
   type: POST_COMMENT_BEGIN
 });
 
-export const postCommentSuccess = comments => ({
+export const postCommentSuccess = data => ({
   type: POST_COMMENT_SUCCESS,
-  payload: { comments }
+  payload: { data }
 });
 
 export const postCommentFailure = error => ({
@@ -57,40 +57,24 @@ export const postCommentFailure = error => ({
   payload: { error }
 });
 
-// export function postComments(postId: string) {
-//   return dispatch => {
-//     dispatch(postCommentBegin());
-//     return fetch( `${API_ENDPOINT}/comments`, { headers: HEADERS })
-//       .then(handleErrors)
-//       .then(res => res.json())
-//       .then(json => {
-//         dispatch(postCommentSuccess(json));
-//         return json;
-//       })
-//       .catch(error => dispatch(postCommentFailure(error)));
-//   };
-// }
-
-export function postComment(values, parentId, callback) {
-  const { body, author } = values
+export function postComment(formData, parentId, callback) {
+  const { body, author } = formData
 
   const data = {
-      id: guid(),
-      parentId,
-      timestamp: Date.now(),
-      body,
-      author
+    id: guid(),
+    parentId,
+    timestamp: Date.now(),
+    body,
+    author
   }
-      
+
   return dispatch => {
-    dispatch(postCommentBegin());
+    dispatch(postCommentBegin())
     axios.post(`${API_ENDPOINT}/comments`, data)
-    .then(handleErrors)
-      .then(json => {
-        callback()
-        // dispatch({ type: CREATE_COMMENT_POST, payload: res.data });
-        dispatch(postCommentSuccess(json))
+      .then(res => {
+        callback(res.data)
+        dispatch(postCommentSuccess(res.data))
       })
-      .catch(error => dispatch(postCommentFailure(error)));
+      .catch(error => dispatch(postCommentFailure(error)))
   }
 }

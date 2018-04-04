@@ -19,6 +19,9 @@ import {
   FETCH_COMMENTS_BEGIN,
   FETCH_COMMENTS_SUCCESS,
   FETCH_COMMENTS_FAILURE,
+  POST_COMMENT_BEGIN,
+  POST_COMMENT_SUCCESS,
+  POST_COMMENT_FAILURE
 } from '../actions'
 
 const initialState = {
@@ -171,6 +174,28 @@ function commentsReducer(state = initialState, action) {
         error: action.payload.error,
         items: []
       };
+
+    case POST_COMMENT_BEGIN:
+      return {
+        ...state,
+        loading: true,
+        error: null
+    }
+
+    case POST_COMMENT_SUCCESS:
+      return {
+        ...state,
+        loading:false,
+        items: [...state.items, action.payload.data]
+    }
+
+    case POST_COMMENT_FAILURE:
+      return {
+        ...state,
+        loading:false,
+        error: action.payload.error,
+        items: []
+    }
 
     default:
       return state;
