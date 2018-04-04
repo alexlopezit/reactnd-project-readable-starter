@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 
 import './index.css';
-import App from './components/App';
+import MainContainer from './containers/MainContainer';
 import registerServiceWorker from './registerServiceWorker';
 import { createStore, applyMiddleware, compose } from 'redux'
 import reducer from './reducers'
@@ -32,7 +32,7 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <MainContainer />
     </BrowserRouter>
   </Provider>,
   document.getElementById('root')

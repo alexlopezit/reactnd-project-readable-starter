@@ -1,6 +1,25 @@
 import { combineReducers } from 'redux'
-import { FETCH_CATEGORIES_BEGIN, FETCH_CATEGORIES_SUCCESS, FETCH_CATEGORIES_FAILURE } from '../actions/CategoriesActions'
-import { FETCH_POSTS_BEGIN, FETCH_POSTS_SUCCESS, FETCH_POSTS_FAILURE } from '../actions/PostsActions'
+
+import {
+  FETCH_CATEGORIES_BEGIN,
+  FETCH_CATEGORIES_SUCCESS,
+  FETCH_CATEGORIES_FAILURE,
+
+  FETCH_POSTS_BEGIN,
+  FETCH_POSTS_SUCCESS,
+  FETCH_POSTS_FAILURE,
+  SORT_POSTS,
+  FETCH_SINGLE_POST_BEGIN,
+  FETCH_SINGLE_POST_SUCCESS,
+  FETCH_SINGLE_POST_FAILURE,
+  NEW_POST_BEGIN,
+  NEW_POST_SUCCESS,
+  NEW_POST_FAILURE,
+
+  FETCH_COMMENTS_BEGIN,
+  FETCH_COMMENTS_SUCCESS,
+  FETCH_COMMENTS_FAILURE,
+} from '../actions'
 
 const initialState = {
   items: [],
@@ -50,10 +69,102 @@ function postsReducer(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        items: action.payload.categories
+        items: action.payload.posts
       };
 
     case FETCH_POSTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error,
+        items: []
+      };
+
+    case NEW_POST_BEGIN:
+      return {
+        ...state,
+        loading: true,
+        error: null
+    }
+
+    case NEW_POST_SUCCESS:
+      return {
+        ...state,
+        loading:false,
+        items: [...state.items, action.payload.data]
+    }
+
+    case NEW_POST_FAILURE:
+      return {
+        ...state,
+        loading:false,
+        error: action.payload.error,
+        items: []
+    }
+
+    case SORT_POSTS:
+      return {
+        ...state,
+        sortByCriteria: action.payload.sortByCriteria
+      };
+
+    default:
+      return state;
+  }
+}
+
+const singlePostInitialState = {
+  item: {},
+  loading: false,
+  error: null
+};
+
+function singlePostReducer(state = singlePostInitialState, action) {
+  switch(action.type) {
+    case FETCH_SINGLE_POST_BEGIN:
+      return {
+        ...state,
+        loading: true,
+        error: null
+      };
+
+    case FETCH_SINGLE_POST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        item: action.payload.post
+      };
+
+    case FETCH_SINGLE_POST_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error,
+        item: []
+      };
+
+    default:
+      return state;
+  }
+}
+
+function commentsReducer(state = initialState, action) {
+  switch(action.type) {
+    case FETCH_COMMENTS_BEGIN:
+      return {
+        ...state,
+        loading: true,
+        error: null
+      };
+
+    case FETCH_COMMENTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        items: action.payload.comments
+      };
+
+    case FETCH_COMMENTS_FAILURE:
       return {
         ...state,
         loading: false,
@@ -70,4 +181,6 @@ function postsReducer(state = initialState, action) {
 export default combineReducers({
   categoriesReducer,
   postsReducer,
+  singlePostReducer,
+  commentsReducer
 });
