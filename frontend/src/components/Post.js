@@ -9,14 +9,16 @@ import Categories from './includes/Categories'
 import Header from '../components/includes/Header'
 import Nav from '../components/includes/Nav'
 import Footer from '../components/includes/Footer'
-import { fetchPostById } from '../actions'
+import { fetchPostById, votePost } from '../actions'
 
 import Comments from './includes/Comments'
 
 class Post extends React.Component {
 
   static propTypes = {
-    post: PropTypes.object.isRequired
+    post: PropTypes.object.isRequired,
+    fetchPostById: PropTypes.func.isRequired,
+    votePost: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -24,8 +26,14 @@ class Post extends React.Component {
     this.props.fetchPostById( match.params.postId)
   }
 
+  vote = (value) => {
+    const { match } = this.props
+    this.props.votePost(match.params.postId, value)
+  }
+
   render() {
     const { post, error, loading } = this.props
+    const { vote } = this
 
     if (error) { return <div>Error! {error.message}</div>; }
 
@@ -43,6 +51,14 @@ class Post extends React.Component {
                   <h2 className="blog-post-title">{post.title}</h2>
                   <p className="blog-post-meta">Posted on {moment(post.timestamp).format("MM/DD/YYYY")} by {post.author} | <Link to={ `/category/${post.category}`}>{post.category}</Link></p>
                   <p>{post.body}</p>
+                  <hr/>
+                  Votes
+                  <div className="btn-group">
+                    <button type="button" onClick={ () => vote('downVote') } className="btn btn-default"><i className="fa fa-caret-down" /></button>
+                    <button type="button" disabled className="btn btn-default">{post.voteScore}</button>
+                    <button type="button" onClick={ () => vote('upVote') } className="btn btn-default"><i className="fa fa-caret-up" /></button>
+                  </div>
+                  <hr/>
                   { post.id && <Comments postId={ post.id } /> }
                 </React.Fragment>                
               }
@@ -69,7 +85,8 @@ function mapStateToProps ({ singlePostReducer }) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    fetchPostById: (postId) => dispatch(fetchPostById(postId))
+    fetchPostById: (postId) => dispatch(fetchPostById(postId)),
+    votePost: (postId, vote) => dispatch(votePost(postId, vote))
   }
 }
 

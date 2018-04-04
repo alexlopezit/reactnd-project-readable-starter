@@ -62,12 +62,8 @@ class Posts extends React.Component {
 
         { sortedPosts.map(post =>  
           <div className="blog-post" key={ `post-${post.id}` }>
-            <h2 className="blog-post-title">{post.title}</h2>
-            <p className="blog-post-meta">Posted on {moment(post.timestamp).format("MM/DD/YYYY")} by {post.author}</p>
-            <p>{post.body}</p>
-            <p><i className="fa fa-thumbs-o-up"/> {post.voteScore} | {post.commentCount} comments</p>
-
-            <Link to={ "/post/" + post.id }>Read More...</Link>
+            <Link to={ "/post/" + post.id } className="blog-post-title">{post.title}</Link>
+            <p className="text-muted"> {post.voteScore} votes | by {post.author} on {moment(post.timestamp).format("MM/DD/YYYY")} | {post.commentCount} comments</p>
             <hr/>
           </div>
         )}

@@ -23,7 +23,6 @@ export const NEW_POST_BEGIN = 'NEW_POST_BEGIN'
 export const NEW_POST_SUCCESS = 'NEW_POST_SUCCESS'
 export const NEW_POST_FAILURE = 'NEW_POST_FAILURE'
 
-
 export const fetchPostsBegin = () => ({
   type: FETCH_POSTS_BEGIN
 })
@@ -125,5 +124,22 @@ export function newPost(formData, callback) {
       })
       .catch(error => dispatch(newPostFailure(error)))
     
+  }
+}
+
+// Vote
+export function votePost(id: string, vote: string) {
+
+  const data = {
+    option: vote
+  }
+
+  return dispatch => {
+    dispatch(fetchSinglePostBegin())
+    axios.post(`${API_ENDPOINT}/posts/${id}`, data)
+      .then(res => {
+        dispatch(fetchSinglePostSuccess(res.data))
+      })
+      .catch(error => dispatch(fetchSinglePostFailure(error)))
   }
 }
